@@ -5,6 +5,9 @@ resources:
   source:
     uri: git@github.com:EngineerBetter/stopover-resource.git
     private_key: ((github_private_key))
+    paths:
+    - assets
+    - Dockerfile
 
 - name: stopover-resource-image
   type: docker-image
