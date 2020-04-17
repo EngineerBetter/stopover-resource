@@ -1,0 +1,39 @@
+#!/bin/sh
+
+set -e -u
+
+exec 3>&1 # make stdout available as fd 3 for the result
+exec 1>&2 # redirect all output to stderr for logging
+
+payload=$(mktemp $TMPDIR/stopover-resource-request.XXXXXX)
+
+cat > $payload <&0
+
+uri=$(jq -r '.source.uri // ""' < $payload)
+username=$(jq -r '.source.username // ""' < $payload)
+password=$(jq -r '.source.password // ""' < $payload)
+team=$(jq -r '.source.team // ""' < $payload)
+
+wget --no-check-certificate "${uri}/api/v1/cli?arch=amd64&platform=linux" -O fly
+
+chmod +x fly
+
+./fly --target ci \
+  login \
+  --insecure \
+  --concourse-url "${uri}" \
+  --username "${username}" \
+  --password "${password}" \
+  --team-name "${team}"
+
+ATC_BEARER_TOKEN=$(yq -r '.targets.ci.token.value' ~/.flyrc)
+export ATC_BEARER_TOKEN
+
+stopover "${uri}" "${BUILD_TEAM_NAME}" "${BUILD_PIPELINE_NAME}" "${BUILD_JOB_NAME}" "${BUILD_NAME}" > versions.yml
+
+jq -n "{
+    \"version\": { \"build_id\": \"${BUILD_ID}\" },
+    \"metadata\": [
+        { \"name\": \"versions\", \"value\": \"versions.yml\" },
+    ]
+}" >&3

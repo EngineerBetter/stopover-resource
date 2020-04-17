@@ -1,0 +1,41 @@
+---
+resources:
+- name: stopover-resource-repo
+  type: git
+  source:
+    uri: git@github.com:EngineerBetter/stopover-resource.git
+    private_key: ((github_private_key))
+
+- name: stopover-resource-image
+  type: docker-image
+  source:
+    username: ((dockerhub_user))
+    password: ((dockerhub_password))
+    repository: engineerbetter/stopover-resource
+
+- name: stopover-resource-tag
+  type: semver
+  source:
+    driver: s3
+    key: docker-tag
+    bucket: stopover-resource-pipeline
+    access_key_id: ((aws_access_key_id))
+    secret_access_key: ((aws_secret_access_key))
+    region_name: eu-west-1
+
+jobs:
+- name: build-stopover-resource
+  serial: true
+  plan:
+  - in_parallel:
+    - get: stopover-resource-tag
+      params: {bump: minor}
+    - get: stopover-resource-repo
+      trigger: true
+  - put: stopover-resource-image
+    params:
+      build: stopover-resource-repo
+      tag_file: stopover-resource-tag/version
+      tag_as_latest: true
+  - put: stopover-resource-tag
+    params: {file: stopover-resource-tag/version}
