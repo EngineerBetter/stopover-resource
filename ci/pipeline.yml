@@ -21,7 +21,7 @@ resources:
     bucket: stopover-resource-pipeline
     access_key_id: ((aws_access_key_id))
     secret_access_key: ((aws_secret_access_key))
-    region_name: eu-west-1
+    region_name: eu-west-2
 
 jobs:
 - name: build-stopover-resource
