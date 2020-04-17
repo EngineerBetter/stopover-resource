@@ -20,7 +20,7 @@ cat > $payload <&0
 uri=$(jq -r '.source.uri // ""' < $payload)
 username=$(jq -r '.source.username // ""' < $payload)
 password=$(jq -r '.source.password // ""' < $payload)
-team=$(jq -r '.source.team // ""' < $payload)
+team=$(jq -r '.source.team // "main"' < $payload)
 
 if [ -z "$uri" ]; then
   echo "invalid payload (missing uri):" >&2
@@ -36,9 +36,6 @@ if [ -z "$password" ]; then
   echo "invalid payload (missing password):" >&2
   cat $payload >&2
   exit 1
-fi
-if [ -z "$team" ]; then
-  team=main
 fi
 
 wget --no-check-certificate "${uri}/api/v1/cli?arch=amd64&platform=linux" -O fly
