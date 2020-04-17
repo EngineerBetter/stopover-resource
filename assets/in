@@ -5,6 +5,13 @@ set -e -u
 exec 3>&1 # make stdout available as fd 3 for the result
 exec 1>&2 # redirect all output to stderr for logging
 
+destination=$1
+
+if [ -z "$destination" ]; then
+  echo "usage: $0 <path/to/destination>" >&2
+  exit 1
+fi
+
 export TMPDIR=${TMPDIR:-/tmp}
 payload=$(mktemp $TMPDIR/stopover-resource-request.XXXXXX)
 
@@ -30,11 +37,11 @@ chmod +x fly
 ATC_BEARER_TOKEN=$(yq r ~/.flyrc 'targets.ci.token.value')
 export ATC_BEARER_TOKEN
 
-stopover "${uri}" "${BUILD_TEAM_NAME}" "${BUILD_PIPELINE_NAME}" "${BUILD_JOB_NAME}" "${BUILD_NAME}" > versions.yml
+stopover "${uri}" "${BUILD_TEAM_NAME}" "${BUILD_PIPELINE_NAME}" "${BUILD_JOB_NAME}" "${BUILD_NAME}" > "${destination}/versions.yml"
 
 jq -n \
   --arg build_id "${BUILD_ID}" \
-  --arg versions "$(yq read --tojson versions.yml)" \
+  --arg versions "$(yq read --tojson "${destination}/versions.yml")" \
   '{
     "version": { "build_id": $build_id },
     "metadata": [
