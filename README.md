@@ -72,19 +72,17 @@ Always emits an empty version.
 
 ```yaml
 resource_version_bosh-deployment:
-  ref: 5dd6e6863d537bfed6760b08884ab938a6496c59
+  ref: c11d44aba9bad4d8f40a0169f8b7fea1b2c1bc2e
 resource_version_cf-deployment:
-  id: "25465294"
-  tag: v12.42.0
-  timestamp: 2020-04-13T22:21:20Z
+  id: "25621973"
+  tag: v12.43.0
+  timestamp: 2020-04-17T17:32:31Z
 resource_version_cf-smoke-tests:
   ref: 93e9fb5f0d2083c0835c5daef9472c4a08723d0e
 resource_version_pcf-ops-image:
   digest: sha256:9ed31d515c6059f1a8147ddb81fc04528d5913ef52e9e4cebfd819432e310272
 resource_version_pipeline-promotion:
-  ref: 2d9d15f365f5acd5305e6a379b73b001d5d67d04
-resource_version_stopover:
-  random: "3804"
+  ref: d348108199653d9c4455e1feab196fe16001f501
 ```
 
 ### `out`
