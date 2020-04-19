@@ -62,7 +62,7 @@ Always emits an empty version.
     - get: pcf-ops-image
       trigger: true
       passed: [smoke-test]
-  - get: stopover
+  - put: stopover
   - put: versions-s3
     params:
       file: stopover/versions.yml
