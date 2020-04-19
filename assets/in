@@ -55,12 +55,11 @@ export ATC_BEARER_TOKEN
 
 stopover "${uri}" "${BUILD_TEAM_NAME}" "${BUILD_PIPELINE_NAME}" "${BUILD_JOB_NAME}" "${BUILD_NAME}" > "${destination}/versions.yml"
 
-jq -n \
-  --arg build_id "${BUILD_ID}" \
-  --arg versions "$(yq read --tojson "${destination}/versions.yml")" \
-  '{
-    "version": { "build_id": $build_id },
-    "metadata": [
-        { "name": "versions", "value": $versions }
-    ]
-  }' >&3
+cat <<EOF
+{
+  "version": { "build_id": "$BUILD_ID" },
+  "metadata": [
+    { "name": "versions", "value": "$(yq read --tojson "${destination}/versions.yml")"}
+  ]
+}
+EOF
